@@ -63,19 +63,20 @@ class QingpingCloud:
           value=property_data.get("value", None),
           status=property_data.get("status", 0)
         )
+      info = raw_device["info"]
       device = QingpingDevice(
-        name=raw_device["info"]["name"],
-        mac=raw_device["info"]["mac"],
-        group_id=raw_device["info"]["group_id"],
-        group_name=raw_device["info"]["group_name"],
-        status_offline=raw_device["info"]["status"]["offline"],
-        version=raw_device["info"]["version"],
-        created_at=raw_device["info"]["created_at"],
-        product_id=raw_device["info"]["product"]["id"],
-        product_name=raw_device["info"]["product"]["name"],
-        product_en_name=raw_device["info"]["product"]["en_name"],
-        setting_report_interval=raw_device["info"]["setting"]["report_interval"],
-        setting_collect_interval=raw_device["info"]["setting"]["collect_interval"],
+        name=info.get("name", ""),
+        mac=info.get("mac", ""),
+        group_id=info.get("group_id", ""),
+        group_name=info.get("group_name", ""),
+        status_offline=info.get("status", {}).get("offline", True),
+        version=info.get("version", ""),
+        created_at=info.get("created_at", ""),
+        product_id=info.get("product", {}).get("id", ""),
+        product_name=info.get("product", {}).get("name", ""),
+        product_en_name=info.get("product", {}).get("en_name", ""),
+        setting_report_interval=info.get("setting", {}).get("report_interval", 0),
+        setting_collect_interval=info.get("setting", {}).get("collect_interval", 0),
         data=data
       )
       devices.append(device)
