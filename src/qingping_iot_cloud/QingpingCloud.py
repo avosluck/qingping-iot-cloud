@@ -13,6 +13,9 @@ _LOGGER = logging.getLogger(__name__)
 class QingpingCloud:
   OAUTH_TOKEN_URL = 'https://oauth.cleargrass.com/oauth2/token'
   API_URL_PREFIX = 'https://apis.cleargrass.com/v1/apis'
+  # (connect, read) seconds. Without a timeout a stalled server keeps the
+  # calling thread blocked forever.
+  HTTP_TIMEOUT = (10, 30)
   
   def _api_get(self, endpoint) -> dict:
     timestamp=int(time.time()*1000)
@@ -23,10 +26,14 @@ class QingpingCloud:
     
     _LOGGER.debug(f"API GET REQUEST URL: {url}")
     
-    api_request = requests.get(
-      url,
-      auth=self._auth
-    )
+    try:
+      api_request = requests.get(
+        url,
+        auth=self._auth,
+        timeout=self.HTTP_TIMEOUT
+      )
+    except requests.RequestException as e:
+      raise APIConnectionError(f"Error connecting to API ({e})")
 
     _LOGGER.debug(f"API GET RESPONSE CODE: {api_request.status_code}")
     
